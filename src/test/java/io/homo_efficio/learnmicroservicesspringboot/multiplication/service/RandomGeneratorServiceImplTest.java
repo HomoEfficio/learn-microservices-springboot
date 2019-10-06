@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author homo.efficio@gmail.com
  * created on 2019-10-06
  */
-public class RandomGeneratorServiceTest {
+public class RandomGeneratorServiceImplTest {
 
     private RandomGeneratorService randomGeneratorService;
 

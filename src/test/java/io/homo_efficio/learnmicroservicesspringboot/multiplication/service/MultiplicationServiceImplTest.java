@@ -14,7 +14,7 @@ import static org.mockito.BDDMockito.given;
  * created on 2019-10-06
  */
 @SpringBootTest
-public class MultiplicationServiceTest {
+public class MultiplicationServiceImplTest {
 
     @MockBean
     private RandomGeneratorService randomGeneratorService;
