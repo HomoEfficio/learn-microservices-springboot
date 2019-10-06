@@ -1,5 +1,6 @@
 package io.homo_efficio.learnmicroservicesspringboot.multiplication.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,11 +15,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author homo.efficio@gmail.com
  * created on 2019-10-06
  */
-@SpringBootTest
 public class RandomGeneratorServiceTest {
 
-    @Autowired
     private RandomGeneratorService randomGeneratorService;
+
+    @BeforeEach
+    public void setup() {
+        randomGeneratorService = new RandomGeneratorServiceImpl();
+    }
 
     @Test
     public void generateRandomFactorIsBetweenExpectedLimits() throws Exception {
