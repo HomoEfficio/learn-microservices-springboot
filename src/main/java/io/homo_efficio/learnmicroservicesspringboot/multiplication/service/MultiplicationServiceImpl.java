@@ -1,6 +1,7 @@
 package io.homo_efficio.learnmicroservicesspringboot.multiplication.service;
 
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multiplication;
+import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.MultiplicationAttempt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +20,10 @@ public class MultiplicationServiceImpl implements MultiplicationService {
         int factorA = randomGeneratorService.generateRandomFactor();
         int factorB = randomGeneratorService.generateRandomFactor();
         return new Multiplication(factorA, factorB);
+    }
+
+    @Override
+    public boolean checkAttempt(MultiplicationAttempt resultAttempt) {
+        return false;
     }
 }

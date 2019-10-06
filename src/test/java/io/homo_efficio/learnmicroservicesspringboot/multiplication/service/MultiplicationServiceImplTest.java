@@ -1,6 +1,8 @@
 package io.homo_efficio.learnmicroservicesspringboot.multiplication.service;
 
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multiplication;
+import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.MultiplicationAttempt;
+import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -41,6 +43,37 @@ public class MultiplicationServiceImplTest {
         // then
         assertThat(multiplication.getFactorA()).isEqualTo(50);
         assertThat(multiplication.getFactorB()).isEqualTo(30);
-        assertThat(multiplication.getResult()).isEqualTo(1500);
+        // FIXME Multiplication에 lombok 적용하면서 result 필드가 제거됨. 책 구성 오류인 듯
+//        assertThat(multiplication.getResult()).isEqualTo(1500);
+    }
+
+    @Test
+    public void checkCorrectAttemptTest() {
+        // given
+        Multiplication multiplication = new Multiplication(50, 60);
+        User user = new User("homo efficio");
+        MultiplicationAttempt multiplicationAttempt =
+                new MultiplicationAttempt(user, multiplication, 3000);
+
+        // when
+        boolean result = multiplicationService.checkAttempt(multiplicationAttempt);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void checkWrongAttemptTest() {
+        // given
+        Multiplication multiplication = new Multiplication(50, 60);
+        User user = new User("homo efficio");
+        MultiplicationAttempt multiplicationAttempt =
+                new MultiplicationAttempt(user, multiplication, 5000);
+
+        // when
+        boolean result = multiplicationService.checkAttempt(multiplicationAttempt);
+
+        // then
+        assertThat(result).isFalse();
     }
 }
