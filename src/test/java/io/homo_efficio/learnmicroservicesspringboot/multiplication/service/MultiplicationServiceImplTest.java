@@ -1,7 +1,10 @@
 package io.homo_efficio.learnmicroservicesspringboot.multiplication.service;
 
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multiplication;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,14 +16,18 @@ import static org.mockito.BDDMockito.given;
  * @author homo.efficio@gmail.com
  * created on 2019-10-06
  */
-@SpringBootTest
 public class MultiplicationServiceImplTest {
 
-    @MockBean
+    @Mock
     private RandomGeneratorService randomGeneratorService;
 
-    @Autowired
     private MultiplicationService multiplicationService;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        multiplicationService = new MultiplicationServiceImpl(randomGeneratorService);
+    }
 
     @Test
     public void createRandomMultiplicationTest() {
