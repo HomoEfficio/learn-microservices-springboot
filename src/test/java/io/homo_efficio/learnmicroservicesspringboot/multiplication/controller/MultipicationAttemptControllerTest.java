@@ -56,7 +56,7 @@ public class MultipicationAttemptControllerTest {
         )).willReturn(correct);
         User user = new User("Homo Efficio");
         Multiplication multiplication = new Multiplication(20, 30);
-        MultiplicationAttempt multiplicationAttempt = new MultiplicationAttempt(user, multiplication, 600);
+        MultiplicationAttempt multiplicationAttempt = new MultiplicationAttempt(user, multiplication, 600, false);
 
         // when
         MockHttpServletResponse response = mvc.perform(

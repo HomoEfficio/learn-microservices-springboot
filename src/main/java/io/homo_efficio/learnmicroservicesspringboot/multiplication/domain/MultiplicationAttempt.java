@@ -20,10 +20,12 @@ public final class MultiplicationAttempt {
     private final User user;
     private final Multiplication multiplication;
     private final int resultAttempt;
+    private final boolean correct;
 
     public MultiplicationAttempt() {
         this.user = null;
         this.multiplication = null;
         this.resultAttempt = -1;
+        this.correct = false;
     }
 }
