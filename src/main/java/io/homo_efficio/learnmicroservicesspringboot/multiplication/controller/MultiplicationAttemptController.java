@@ -21,7 +21,7 @@ public class MultiplicationAttemptController {
     @Getter
     @RequiredArgsConstructor
     @NoArgsConstructor(force = true)
-    private static final class ResultResponse {
+    public static final class ResultResponse {
         private final boolean correct;
     }
 }
