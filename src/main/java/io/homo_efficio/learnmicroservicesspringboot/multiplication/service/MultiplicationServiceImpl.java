@@ -4,6 +4,7 @@ import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multip
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.MultiplicationAttempt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * @author homo.efficio@gmail.com
@@ -23,9 +24,11 @@ public class MultiplicationServiceImpl implements MultiplicationService {
     }
 
     @Override
-    public boolean checkAttempt(MultiplicationAttempt resultAttempt) {
-        return resultAttempt.getResultAttempt() ==
-                resultAttempt.getMultiplication().getFactorA() *
-                        resultAttempt.getMultiplication().getFactorB();
+    public boolean checkAttempt(MultiplicationAttempt attempt) {
+        Assert.isTrue(!attempt.isCorrect(), "You should not send an attempt marked as true!!");
+        boolean correct = attempt.getResultAttempt() ==
+                attempt.getMultiplication().getFactorA() *
+                        attempt.getMultiplication().getFactorB();
+        return correct;
     }
 }

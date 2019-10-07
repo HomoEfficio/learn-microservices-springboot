@@ -23,16 +23,15 @@ public class MultiplicationAttemptController {
     private final MultiplicationService multiplicationService;
 
     @PostMapping
-    public ResponseEntity<ResultResponse> postResult(@RequestBody MultiplicationAttempt attempt) {
+    public ResponseEntity<MultiplicationAttempt> postResult(@RequestBody MultiplicationAttempt attempt) {
         return ResponseEntity.ok(
-                new ResultResponse(multiplicationService.checkAttempt(attempt))
+                new MultiplicationAttempt(
+                        attempt.getUser(),
+                        attempt.getMultiplication(),
+                        attempt.getResultAttempt(),
+                        multiplicationService.checkAttempt(attempt)
+                )
         );
     }
 
-    @Getter
-    @RequiredArgsConstructor
-    @NoArgsConstructor(force = true)
-    public static final class ResultResponse {
-        private final boolean correct;
-    }
 }

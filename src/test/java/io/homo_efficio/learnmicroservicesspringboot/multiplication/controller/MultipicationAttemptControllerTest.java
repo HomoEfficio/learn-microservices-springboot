@@ -32,7 +32,7 @@ public class MultipicationAttemptControllerTest {
     private MockMvc mvc;
 
     private JacksonTester<MultiplicationAttempt> jsonAttempt;
-    private JacksonTester<MultiplicationAttemptController.ResultResponse> jsonResponse;
+    private JacksonTester<MultiplicationAttempt> jsonResponse;
 
     @BeforeEach
     public void setup() {
@@ -68,7 +68,7 @@ public class MultipicationAttemptControllerTest {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString())
-                .isEqualTo(jsonResponse.write(new MultiplicationAttemptController.ResultResponse(correct)).getJson());
+                .isEqualTo(jsonResponse.write(new MultiplicationAttempt(user, multiplication, 600, correct)).getJson());
     }
 
 }
