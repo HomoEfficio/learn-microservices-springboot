@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Getter
 @RequiredArgsConstructor
 @ToString
-@EqualsAndHashCode
+//@EqualsAndHashCode
 public final class Multiplication {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +29,23 @@ public final class Multiplication {
     // empty constructor for JSON/JPA
     protected Multiplication() {
         this(0, 0);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Multiplication that = (Multiplication) o;
+
+        if (factorA != that.factorA) return false;
+        return factorB == that.factorB;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = factorA;
+        result = 31 * result + factorB;
+        return result;
     }
 }
