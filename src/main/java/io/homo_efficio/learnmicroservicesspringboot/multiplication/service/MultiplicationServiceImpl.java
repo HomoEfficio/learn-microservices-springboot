@@ -55,6 +55,6 @@ public class MultiplicationServiceImpl implements MultiplicationService {
 
     @Override
     public List<MultiplicationAttempt> getStatsForUser(String userAlias) {
-        return Collections.emptyList();
+        return attemptRepository.findTop5ByUser_AliasOrderByIdDesc(userAlias);
     }
 }
