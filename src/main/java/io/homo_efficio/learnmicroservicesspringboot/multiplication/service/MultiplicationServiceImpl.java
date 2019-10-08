@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,5 +51,10 @@ public class MultiplicationServiceImpl implements MultiplicationService {
         attemptRepository.save(checkedAttempt);
 
         return correct;
+    }
+
+    @Override
+    public List<MultiplicationAttempt> getStatsForUser(String userAlias) {
+        return Collections.emptyList();
     }
 }

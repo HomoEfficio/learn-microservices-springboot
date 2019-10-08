@@ -5,6 +5,7 @@ import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multip
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.User;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.MultiplicationAttemptRepository;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.UserRepository;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,5 +99,29 @@ public class MultiplicationServiceImplTest {
         // then
         assertThat(result).isFalse();
         verify(attemptRepository).save(multiplicationAttempt);
+    }
+
+    @Test
+    public void retrieveStatsTest() {
+        // given
+        Multiplication multiplication = new Multiplication(30, 80);
+        User user = new User("Homo Efficio");
+        given(userRepository.findByAlias("Homo Efficio"))
+                .willReturn(Optional.empty());
+        MultiplicationAttempt attempt1 = new MultiplicationAttempt(user, multiplication, 3010, false);
+        MultiplicationAttempt attempt2 = new MultiplicationAttempt(user, multiplication, 3080, false);
+        MultiplicationAttempt attempt3 = new MultiplicationAttempt(user, multiplication, 2400, false);
+        ArrayList<MultiplicationAttempt> requestAttempts = Lists.newArrayList(attempt1, attempt2, attempt3);
+        given(attemptRepository.findTop5ByUser_AliasOrderByIdDesc("Homo Efficio"))
+                .willReturn(requestAttempts);
+        multiplicationService.checkAttempt(attempt1);
+        multiplicationService.checkAttempt(attempt2);
+        multiplicationService.checkAttempt(attempt3);
+
+        // when
+        List<MultiplicationAttempt> stats = multiplicationService.getStatsForUser("Homo Efficio");
+
+        // then
+        assertThat(stats).isEqualTo(requestAttempts);
     }
 }
