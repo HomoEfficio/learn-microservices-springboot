@@ -3,6 +3,8 @@ package io.homo_efficio.learnmicroservicesspringboot.multiplication.service;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multiplication;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.MultiplicationAttempt;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.User;
+import io.homo_efficio.learnmicroservicesspringboot.multiplication.event.EventDispatcher;
+import io.homo_efficio.learnmicroservicesspringboot.multiplication.event.MultiplicationSolvedEvent;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.MultiplicationAttemptRepository;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.UserRepository;
 import org.assertj.core.util.Lists;
@@ -18,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -39,12 +42,15 @@ public class MultiplicationServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private EventDispatcher eventDispatcher;
+
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         multiplicationService = new MultiplicationServiceImpl(
-                randomGeneratorService, attemptRepository, userRepository);
+                randomGeneratorService, attemptRepository, userRepository, eventDispatcher);
     }
 
     @Test
@@ -74,6 +80,9 @@ public class MultiplicationServiceImplTest {
                 new MultiplicationAttempt(user, multiplication, 3000, true);
         given(userRepository.findByAlias("homo efficio"))
                 .willReturn(Optional.empty());
+        MultiplicationSolvedEvent event = new MultiplicationSolvedEvent(
+                verifiedAttempt.getId(), verifiedAttempt.getUser().getId(), verifiedAttempt.isCorrect()
+        );
 
         // when
         boolean result = multiplicationService.checkAttempt(multiplicationAttempt);
@@ -81,6 +90,7 @@ public class MultiplicationServiceImplTest {
         // then
         assertThat(result).isTrue();
         verify(attemptRepository).save(verifiedAttempt);
+        verify(eventDispatcher).send(event);
     }
 
     @Test
@@ -92,6 +102,9 @@ public class MultiplicationServiceImplTest {
                 new MultiplicationAttempt(user, multiplication, 5000, false);
         given(userRepository.findByAlias("homo efficio"))
                 .willReturn(Optional.empty());
+        MultiplicationSolvedEvent event = new MultiplicationSolvedEvent(
+                multiplicationAttempt.getId(), multiplicationAttempt.getUser().getId(), multiplicationAttempt.isCorrect()
+        );
 
         // when
         boolean result = multiplicationService.checkAttempt(multiplicationAttempt);
@@ -99,6 +112,35 @@ public class MultiplicationServiceImplTest {
         // then
         assertThat(result).isFalse();
         verify(attemptRepository).save(multiplicationAttempt);
+        verify(eventDispatcher).send(event);
+    }
+
+    @Test
+    public void event_will_not_be_sent_when_exception_occurs() {
+        // given
+        Multiplication multiplication = new Multiplication(50, 60);
+        User user = new User("homo efficio");
+        MultiplicationAttempt multiplicationAttempt =
+                new MultiplicationAttempt(user, multiplication, 3000, false);
+        MultiplicationAttempt verifiedAttempt =
+                new MultiplicationAttempt(user, multiplication, 3000, true);
+        given(userRepository.findByAlias("homo efficio"))
+                .willReturn(Optional.empty());
+        MultiplicationSolvedEvent event = new MultiplicationSolvedEvent(
+                verifiedAttempt.getId(), verifiedAttempt.getUser().getId(), verifiedAttempt.isCorrect()
+        );
+
+        given(attemptRepository.save(verifiedAttempt))
+                .willThrow(new RuntimeException("Error while saving MultiplicationAttempt: " + verifiedAttempt));
+
+        // when
+        Throwable throwable = catchThrowable(() -> multiplicationService.checkAttempt(multiplicationAttempt));
+
+        // then
+        verify(attemptRepository).save(verifiedAttempt);
+        verify(eventDispatcher).send(event);
+        assertThat(throwable).isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("MultiplicationAttempt");
     }
 
     @Test

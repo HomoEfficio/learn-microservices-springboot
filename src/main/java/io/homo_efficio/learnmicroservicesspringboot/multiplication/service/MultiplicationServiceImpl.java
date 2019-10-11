@@ -3,6 +3,7 @@ package io.homo_efficio.learnmicroservicesspringboot.multiplication.service;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multiplication;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.MultiplicationAttempt;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.User;
+import io.homo_efficio.learnmicroservicesspringboot.multiplication.event.EventDispatcher;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.MultiplicationAttemptRepository;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class MultiplicationServiceImpl implements MultiplicationService {
     private final RandomGeneratorService randomGeneratorService;
     private final MultiplicationAttemptRepository attemptRepository;
     private final UserRepository userRepository;
+    private final EventDispatcher eventDispatcher;
 
     @Override
     public Multiplication createRandomMultiplication() {
