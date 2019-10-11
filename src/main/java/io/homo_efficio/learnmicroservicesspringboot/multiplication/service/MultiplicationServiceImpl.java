@@ -4,6 +4,7 @@ import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.Multip
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.MultiplicationAttempt;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.domain.User;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.event.EventDispatcher;
+import io.homo_efficio.learnmicroservicesspringboot.multiplication.event.MultiplicationSolvedEvent;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.MultiplicationAttemptRepository;
 import io.homo_efficio.learnmicroservicesspringboot.multiplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,12 @@ public class MultiplicationServiceImpl implements MultiplicationService {
                 attempt.getResultAttempt(),
                 correct);
         attemptRepository.save(checkedAttempt);
+
+        eventDispatcher.send(
+                new MultiplicationSolvedEvent(
+                    checkedAttempt.getId(), checkedAttempt.getUser().getId(), checkedAttempt.isCorrect()
+                )
+        );
 
         return correct;
     }
