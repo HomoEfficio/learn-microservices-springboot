@@ -24,7 +24,9 @@ public class GameServiceImplTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        gameService = new GameServiceImpl();
+        gameService = new GameServiceImpl(
+                badgeCardRepository, scoreCardRepository
+        );
     }
 
     @Test
