@@ -32,26 +32,39 @@ public class GameServiceImpl implements GameService {
         Integer totalScoreForUser = scoreCardRepository.getTotalScoreForUser(userId);
         int totalScore = totalScoreForUser != null ? totalScoreForUser : 0;
         if (correct) {
-            giveFirstWonBadge(userId, scoreCards);
             ScoreCard scoreCard = new ScoreCard(userId, attemptId);
             ScoreCard dbScoreCard = scoreCardRepository.save(scoreCard);
             totalScore += ScoreCard.DEFAULT_SCORE;
-        } else {
-
+            giveCorrectBadge(userId, totalScore);
         }
+        List<Badge> badges = getBadges(userId);
+
+        return new GameStats(userId, totalScore, badges);
+    }
+
+    private List<Badge> getBadges(Long userId) {
         List<BadgeCard> badgeCards = badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId);
         List<Badge> badges = new ArrayList<>();
         for (BadgeCard badgeCard: badgeCards) {
             badges.add(badgeCard.getBadge());
         }
-
-        return new GameStats(userId, totalScore, badges);
+        return badges;
     }
 
-    private void giveFirstWonBadge(Long userId, List<ScoreCard> scoreCards) {
-        if (scoreCards.isEmpty()) {
-            BadgeCard badgeCard = new BadgeCard(userId, Badge.FIRST_WON);
-            BadgeCard dbBadgeCard = badgeCardRepository.save(badgeCard);
+    private void giveCorrectBadge(Long userId, int totalScore) {
+        switch (totalScore) {
+            case 10:
+                badgeCardRepository.save(new BadgeCard(userId, Badge.FIRST_WON));
+                break;
+            case 100:
+                badgeCardRepository.save(new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR));
+                break;
+            case 500:
+                badgeCardRepository.save(new BadgeCard(userId, Badge.SILVER_MULTIPLICATOR));
+                break;
+            case 1000:
+                badgeCardRepository.save(new BadgeCard(userId, Badge.GOLD_MULTIPLICATOR));
+                break;
         }
     }
 
