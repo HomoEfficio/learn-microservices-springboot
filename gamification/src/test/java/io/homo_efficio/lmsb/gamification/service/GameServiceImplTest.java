@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -49,6 +51,8 @@ public class GameServiceImplTest {
         BadgeCard badgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
         given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
                 .willReturn(Collections.singletonList(badgeCard));
+        given(scoreCardRepository.getTotalScoreForUser(userId))
+                .willReturn(0);
 
         // when
         GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, false);
@@ -71,6 +75,9 @@ public class GameServiceImplTest {
         given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
                 .willReturn(Lists.newArrayList(firstWonBadgeCard, firstAttemptBadgeCard));
 
+        given(scoreCardRepository.getTotalScoreForUser(userId))
+                .willReturn(0);
+
         // when
         GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, true);
 
@@ -81,7 +88,32 @@ public class GameServiceImplTest {
 
     @Test
     public void bronzeMedalTest() {
+        // given
+        Long userId = 5L;
+        Long attemptId = 51L;
+        List<ScoreCard> scoreCards = new ArrayList<>();
+        for (int i = 0 ; i < 9 ; i++) {
+            scoreCards.add(new ScoreCard(userId, attemptId + i));
+        }
+        given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+                .willReturn(scoreCards);
 
+        BadgeCard firstAttemptBadgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
+        BadgeCard firstWonBadgeCard = new BadgeCard(userId, Badge.FIRST_WON);
+        BadgeCard bronzeBadgeCard = new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR);
+
+        given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+                .willReturn(Lists.newArrayList(bronzeBadgeCard, firstWonBadgeCard, firstAttemptBadgeCard));
+
+        given(scoreCardRepository.getTotalScoreForUser(userId))
+                .willReturn(90);
+
+        // when
+        GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, true);
+
+        // then
+        assertThat(gameStats.getScore()).isEqualTo(100);
+        assertThat(gameStats.getBadges()).contains(Badge.BRONZE_MULTIPLICATOR, Badge.FIRST_ATTEMPT, Badge.BRONZE_MULTIPLICATOR);
     }
 
     @Test

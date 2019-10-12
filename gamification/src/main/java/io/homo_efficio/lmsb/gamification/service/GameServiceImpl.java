@@ -29,12 +29,13 @@ public class GameServiceImpl implements GameService {
     public GameStats newAttemptForUser(Long userId, Long attemptId, boolean correct) {
         List<ScoreCard> scoreCards = scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId);
         giveFirstAttemptBadge(userId, scoreCards);
-        int score = 0;
+        Integer totalScoreForUser = scoreCardRepository.getTotalScoreForUser(userId);
+        int totalScore = totalScoreForUser != null ? totalScoreForUser : 0;
         if (correct) {
             giveFirstWonBadge(userId, scoreCards);
-            score = ScoreCard.DEFAULT_SCORE;
             ScoreCard scoreCard = new ScoreCard(userId, attemptId);
             ScoreCard dbScoreCard = scoreCardRepository.save(scoreCard);
+            totalScore += ScoreCard.DEFAULT_SCORE;
         } else {
 
         }
@@ -44,7 +45,7 @@ public class GameServiceImpl implements GameService {
             badges.add(badgeCard.getBadge());
         }
 
-        return new GameStats(userId, score, badges);
+        return new GameStats(userId, totalScore, badges);
     }
 
     private void giveFirstWonBadge(Long userId, List<ScoreCard> scoreCards) {
