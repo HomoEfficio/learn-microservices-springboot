@@ -83,7 +83,7 @@ public class GameServiceImplTest {
 
         // then
         assertThat(gameStats.getScore()).isEqualTo(10);
-        assertThat(gameStats.getBadges()).contains(Badge.FIRST_ATTEMPT, Badge.FIRST_WON);
+        assertThat(gameStats.getBadges()).containsOnly(Badge.FIRST_ATTEMPT, Badge.FIRST_WON);
     }
 
     @Test
@@ -113,17 +113,70 @@ public class GameServiceImplTest {
 
         // then
         assertThat(gameStats.getScore()).isEqualTo(100);
-        assertThat(gameStats.getBadges()).contains(Badge.BRONZE_MULTIPLICATOR, Badge.FIRST_ATTEMPT, Badge.BRONZE_MULTIPLICATOR);
+        assertThat(gameStats.getBadges()).containsOnly(Badge.BRONZE_MULTIPLICATOR, Badge.FIRST_WON, Badge.FIRST_ATTEMPT);
     }
 
     @Test
     public void silverMedalTest() {
+        // given
+        Long userId = 2L;
+        Long attemptId = 21L;
+        List<ScoreCard> scoreCards = new ArrayList<>();
+        for (int i = 0 ; i < 49 ; i++) {
+            scoreCards.add(new ScoreCard(userId, attemptId + i));
+        }
+        given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+                .willReturn(scoreCards);
 
+        BadgeCard firstAttemptBadgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
+        BadgeCard firstWonBadgeCard = new BadgeCard(userId, Badge.FIRST_WON);
+        BadgeCard bronzeBadgeCard = new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR);
+        BadgeCard silverBadgeCard = new BadgeCard(userId, Badge.SILVER_MULTIPLICATOR);
+
+        given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+                .willReturn(Lists.newArrayList(silverBadgeCard, bronzeBadgeCard, firstWonBadgeCard, firstAttemptBadgeCard));
+
+        given(scoreCardRepository.getTotalScoreForUser(userId))
+                .willReturn(490);
+
+        // when
+        GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, true);
+
+        // then
+        assertThat(gameStats.getScore()).isEqualTo(500);
+        assertThat(gameStats.getBadges()).containsOnly(Badge.SILVER_MULTIPLICATOR, Badge.BRONZE_MULTIPLICATOR, Badge.FIRST_WON, Badge.FIRST_ATTEMPT);
     }
 
     @Test
     public void goldMedalTest() {
+        // given
+        Long userId = 7L;
+        Long attemptId = 71L;
+        List<ScoreCard> scoreCards = new ArrayList<>();
+        for (int i = 0 ; i < 99 ; i++) {
+            scoreCards.add(new ScoreCard(userId, attemptId + i));
+        }
+        given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+                .willReturn(scoreCards);
 
+        BadgeCard firstAttemptBadgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
+        BadgeCard firstWonBadgeCard = new BadgeCard(userId, Badge.FIRST_WON);
+        BadgeCard bronzeBadgeCard = new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR);
+        BadgeCard silverBadgeCard = new BadgeCard(userId, Badge.SILVER_MULTIPLICATOR);
+        BadgeCard goldBadgeCard = new BadgeCard(userId, Badge.GOLD_MULTIPLICATOR);
+
+        given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+                .willReturn(Lists.newArrayList(goldBadgeCard, silverBadgeCard, bronzeBadgeCard, firstWonBadgeCard, firstAttemptBadgeCard));
+
+        given(scoreCardRepository.getTotalScoreForUser(userId))
+                .willReturn(990);
+
+        // when
+        GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, true);
+
+        // then
+        assertThat(gameStats.getScore()).isEqualTo(1000);
+        assertThat(gameStats.getBadges()).containsOnly(Badge.GOLD_MULTIPLICATOR, Badge.SILVER_MULTIPLICATOR, Badge.BRONZE_MULTIPLICATOR, Badge.FIRST_WON, Badge.FIRST_ATTEMPT);
     }
 
     @Test
