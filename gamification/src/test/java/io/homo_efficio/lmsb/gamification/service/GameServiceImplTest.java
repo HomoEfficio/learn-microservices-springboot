@@ -6,6 +6,7 @@ import io.homo_efficio.lmsb.gamification.domain.GameStats;
 import io.homo_efficio.lmsb.gamification.domain.ScoreCard;
 import io.homo_efficio.lmsb.gamification.repository.BadgeCardRepository;
 import io.homo_efficio.lmsb.gamification.repository.ScoreCardRepository;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -59,7 +60,23 @@ public class GameServiceImplTest {
 
     @Test
     public void firstWonBadgeTest() {
+        // given
+        Long userId = 3L;
+        Long attemptId = 31L;
+        given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+                .willReturn(Collections.emptyList());
+        BadgeCard firstAttemptBadgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
+        BadgeCard firstWonBadgeCard = new BadgeCard(userId, Badge.FIRST_WON);
 
+        given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+                .willReturn(Lists.newArrayList(firstWonBadgeCard, firstAttemptBadgeCard));
+
+        // when
+        GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, true);
+
+        // then
+        assertThat(gameStats.getScore()).isEqualTo(10);
+        assertThat(gameStats.getBadges()).contains(Badge.FIRST_ATTEMPT, Badge.FIRST_WON);
     }
 
     @Test
