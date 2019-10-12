@@ -76,7 +76,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameStats retrieveStatsForUser(Long userId) {
+    public GameStats retrieveTotalStatsForUser(Long userId) {
         return null;
     }
 }

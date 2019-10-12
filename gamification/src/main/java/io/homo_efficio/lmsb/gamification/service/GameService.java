@@ -10,5 +10,5 @@ public interface GameService {
 
     GameStats newAttemptForUser(Long userId, Long attemptId, boolean correct);
 
-    GameStats retrieveStatsForUser(Long userId);
+    GameStats retrieveTotalStatsForUser(Long userId);
 }
