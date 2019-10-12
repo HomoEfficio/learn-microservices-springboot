@@ -62,6 +62,10 @@ public class GameServiceImplTest {
         assertThat(gameStats.getScore()).isEqualTo(0);
     }
 
+    // 서비스 로직에서는 점수에 따른 Badge 부여 로직이 있고 그에 따라 BadgeCard를 save() 하지만,
+    // 테스트에서는 서비스의 BadgeCard 로직을 타지 않고 그저 Mocking 한 값을 그대로 검증할 뿐이다.
+    // 따라서 서비스의 BadgeCard 로직을 테스트로 검증하지 못하는 데 이게 개운하지가 않다.
+
     @Test
     public void firstWonBadgeTest() {
         // given
