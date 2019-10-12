@@ -76,7 +76,12 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GameStats retrieveTotalStatsForUser(Long userId) {
-        return null;
+        Integer totalScoreForUser = scoreCardRepository.getTotalScoreForUser(userId);
+        int totalScore = totalScoreForUser != null ? totalScoreForUser : 0;
+        List<Badge> badges = getBadges(userId);
+
+        return new GameStats(userId, totalScore, badges);
     }
 }
