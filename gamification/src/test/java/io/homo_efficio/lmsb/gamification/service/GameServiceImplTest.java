@@ -184,6 +184,30 @@ public class GameServiceImplTest {
     }
 
     @Test
+    public void retrieveTotalStatsForUser() {
+        // given
+        Long userId = 7L;
+        List<ScoreCard> scoreCards = new ArrayList<>();
+        for (int i = 1 ; i <= 35 ; i++) {
+            scoreCards.add(new ScoreCard(userId, (long) i));
+        }
+        given(scoreCardRepository.getTotalScoreForUser(userId))
+                .willReturn(350);
+
+        BadgeCard firstAttemptBadgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
+        BadgeCard firstWonBadgeCard = new BadgeCard(userId, Badge.FIRST_WON);
+        given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+                .willReturn(Lists.newArrayList(firstWonBadgeCard, firstAttemptBadgeCard));
+
+        // when
+        GameStats gameStats = gameService.retrieveTotalStatsForUser(userId);
+
+        // then
+        assertThat(gameStats.getScore()).isEqualTo(350);
+        assertThat(gameStats.getBadges()).containsOnly(Badge.FIRST_WON, Badge.FIRST_ATTEMPT);
+    }
+
+    @Test
     public void rightAttemptTest() {
 
     }
