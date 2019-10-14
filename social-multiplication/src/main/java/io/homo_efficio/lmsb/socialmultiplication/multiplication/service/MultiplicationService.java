@@ -29,4 +29,11 @@ public interface MultiplicationService {
      * @return Last N MultiplicationAttempts that user attempted
      */
     List<MultiplicationAttempt> getStatsForUser(String userAlias);
+
+    /**
+     *
+     * @param attemptId
+     * @return MultiplicationAttempt that has attemptId
+     */
+    MultiplicationAttempt getAttemptById(Long attemptId);
 }

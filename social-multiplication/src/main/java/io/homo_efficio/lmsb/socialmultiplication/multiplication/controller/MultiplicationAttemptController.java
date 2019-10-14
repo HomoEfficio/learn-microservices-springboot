@@ -35,4 +35,10 @@ public class MultiplicationAttemptController {
     public ResponseEntity<List<MultiplicationAttempt>> getStats(@RequestParam("alias") String alias) {
         return ResponseEntity.ok(multiplicationService.getStatsForUser(alias));
     }
+
+    @GetMapping("/{attemptId}")
+    public ResponseEntity<MultiplicationAttempt> findMultiplicationAttempt(
+            @PathVariable("attemptId") Long attemptId) {
+        return ResponseEntity.ok(multiplicationService.getAttemptById(attemptId));
+    }
 }
