@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,5 +101,26 @@ public class MultiplicationAttemptControllerTest {
         assertThat(response.getContentAsString()).isEqualTo(
                 jsonAttemptList.write(recentAttempts).getJson()
         );
+    }
+
+    @Test
+    public void findResultAttempt() throws Exception {
+        // given
+        User user = new User("Homo Efficio");
+        Multiplication multiplication = new Multiplication(10, 14);
+        // TODO ID가 있는 Attempt를 어떻게 만들어 반환할 것인가
+        Long attemptId = 33L;
+        MultiplicationAttempt multiplicationAttempt = new MultiplicationAttempt(user, multiplication, 140, false);
+        given(multiplicationService.getAttemptById(attemptId))
+                .willReturn(multiplicationAttempt);
+
+        // when
+        MockHttpServletResponse response = mvc.perform(get("/results/" + attemptId).accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString())
+                .isEqualTo(jsonAttempt.write(multiplicationAttempt).getJson());
     }
 }
