@@ -13,5 +13,6 @@ public enum Badge {
 
     // Other badges won for different conditions
     FIRST_ATTEMPT,
-    FIRST_WON
+    FIRST_WON,
+    LUCKY_BADGE_42
 }
