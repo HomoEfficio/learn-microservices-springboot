@@ -1,5 +1,7 @@
 package io.homo_efficio.lmsb.gamification.service;
 
+import io.homo_efficio.lmsb.gamification.client.MultiplicationAttemptClient;
+import io.homo_efficio.lmsb.gamification.client.dto.MultiplicationAttempt;
 import io.homo_efficio.lmsb.gamification.domain.Badge;
 import io.homo_efficio.lmsb.gamification.domain.BadgeCard;
 import io.homo_efficio.lmsb.gamification.domain.GameStats;
@@ -24,6 +26,8 @@ public class GameServiceImpl implements GameService {
 
     private final BadgeCardRepository badgeCardRepository;
     private final ScoreCardRepository scoreCardRepository;
+    private final MultiplicationAttemptClient multiplicationAttemptClient;
+    int LUCKY_NUMBER = 42;
 
     @Override
     public GameStats newAttemptForUser(Long userId, Long attemptId, boolean correct) {

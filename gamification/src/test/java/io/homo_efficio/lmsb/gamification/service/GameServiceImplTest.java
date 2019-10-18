@@ -1,5 +1,8 @@
 package io.homo_efficio.lmsb.gamification.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.homo_efficio.lmsb.gamification.client.MultiplicationAttemptClient;
+import io.homo_efficio.lmsb.gamification.client.dto.MultiplicationAttempt;
 import io.homo_efficio.lmsb.gamification.domain.Badge;
 import io.homo_efficio.lmsb.gamification.domain.BadgeCard;
 import io.homo_efficio.lmsb.gamification.domain.GameStats;
@@ -11,13 +14,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.json.JacksonTester;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author homo.efficio@gmail.com
@@ -33,12 +41,17 @@ public class GameServiceImplTest {
     @Mock
     private ScoreCardRepository scoreCardRepository;
 
+    @Mock
+    private MultiplicationAttemptClient multiplicationAttemptClient;
+
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         gameService = new GameServiceImpl(
-                badgeCardRepository, scoreCardRepository
+                badgeCardRepository, scoreCardRepository, multiplicationAttemptClient
         );
+        JacksonTester.initFields(this, new ObjectMapper());
     }
 
     @Test
@@ -214,6 +227,29 @@ public class GameServiceImplTest {
 
     @Test
     public void wrongAttemptTest() {
+
+    }
+
+    @Test
+    public void luckyMedalTest() throws IOException {
+        // given
+        long userId = new Random().nextInt(100) + 1;
+        Long attemptId = 3L;
+        MultiplicationAttempt luckyAttempt = new MultiplicationAttempt(
+                "Homo Efficio",
+                10, 42,
+                420, true
+        );
+        given(multiplicationAttemptClient.retrieveMultiplicationAttemptById(attemptId))
+                .willReturn(luckyAttempt);
+
+        // when
+        GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, true);
+
+        // then
+        verify(badgeCardRepository).save(argThat(b -> b.getBadge().equals(Badge.FIRST_ATTEMPT)));
+        verify(badgeCardRepository).save(argThat(b -> b.getBadge().equals(Badge.FIRST_WON)));
+        verify(badgeCardRepository).save(argThat(b -> b.getBadge().equals(Badge.LUCKY_BADGE_42)));
 
     }
 }
