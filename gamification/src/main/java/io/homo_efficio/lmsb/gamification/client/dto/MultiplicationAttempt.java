@@ -29,4 +29,8 @@ public class MultiplicationAttempt {
         this.attempt = -1;
         this.correct = false;
     }
+
+    public boolean isLucky(int luckyNumber) {
+        return factorA == luckyNumber || factorB == luckyNumber;
+    }
 }
