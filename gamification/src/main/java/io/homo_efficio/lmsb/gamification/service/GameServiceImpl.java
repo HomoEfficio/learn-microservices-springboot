@@ -40,6 +40,7 @@ public class GameServiceImpl implements GameService {
             ScoreCard dbScoreCard = scoreCardRepository.save(scoreCard);
             totalScore += ScoreCard.DEFAULT_SCORE;
             giveCorrectBadge(userId, totalScore);
+            giveLucky42Badge(userId, attemptId);
         }
         List<Badge> badges = getBadges(userId);
 
@@ -76,6 +77,15 @@ public class GameServiceImpl implements GameService {
         if (scoreCards.isEmpty()) {
             BadgeCard badgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
             BadgeCard dbBadgeCard = badgeCardRepository.save(badgeCard);
+        }
+    }
+
+    private void giveLucky42Badge(Long userId, Long attemptId) {
+        MultiplicationAttempt multiplicationAttempt = multiplicationAttemptClient.retrieveMultiplicationAttemptById(attemptId);
+        if (multiplicationAttempt != null) {
+            if (multiplicationAttempt.isLucky(LUCKY_NUMBER)) {
+                badgeCardRepository.save(new BadgeCard(userId, Badge.LUCKY_BADGE_42));
+            }
         }
     }
 
