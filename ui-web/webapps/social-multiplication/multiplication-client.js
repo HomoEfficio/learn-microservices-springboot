@@ -12,13 +12,15 @@ function updateMultiplication() {
   });
 }
 
-function updateAttemptsStats(alias) {
+function updateResults(alias) {
+  let userId = -1;
   $.ajax({
     url: "http://localhost:8080/results?alias=" + alias
   }).then(function (data) {
-    $('#stats-body').empty();
+    $('#results-div').show();
+    $('#results-body').empty();
     data.forEach(function (row) {
-      $('#stats-body').append(
+      $('#results-body').append(
         '<tr>' +
           '<td>' + row.id + '</td>' +
           '<td>' + row.multiplication.factorA + ' x ' + row.multiplication.factorB + '</td>' +
@@ -26,7 +28,9 @@ function updateAttemptsStats(alias) {
           '<td>' + (row.correct === true ? 'YES' : 'NO') + '</td>' +
         '</tr>');
     });
+    userId = data[0].user.id;
   });
+  return userId;
 }
 
 $(document).ready(function() {
@@ -54,15 +58,21 @@ $(document).ready(function() {
       url: 'http://localhost:8080/results',
       type: 'POST',
       data: JSON.stringify(data),
-      contentType: "application/json; charset=utf-8", dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
       success: function(result){
         if(result.correct) {  // MultiplicationAttempt also contains 'correct', so no modification needed.
-          $('.result-message').empty().append("The result is correct! Congratulations!");
+          $('.result-message').empty().append("<p class='bg-success text-center'>The result is correct! Congratulations!</p>");
         } else {
-          $('.result-message').empty().append("Oops that's not correct! But keep trying!");
+          $('.result-message').empty().append("<p class='bg-danger text-center'>Oops that's not correct! But keep trying!</p>");
         } }
     });
     updateMultiplication();
-    updateAttemptsStats(userAlias);
+
+    setTimeout(function() {
+      const userId = updateResults(userAlias);
+      // updateStats(userId);
+      updateLeaderBoard();
+    }, 300);
   });
 });
