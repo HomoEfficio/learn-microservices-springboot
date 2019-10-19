@@ -59,24 +59,23 @@ public class GameServiceImpl implements GameService {
     private void giveCorrectBadge(Long userId, int totalScore) {
         switch (totalScore) {
             case 10:
-                badgeCardRepository.save(new BadgeCard(userId, Badge.FIRST_WON));
+                giveBadgeToUser(userId, Badge.FIRST_WON);
                 break;
             case 100:
-                badgeCardRepository.save(new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR));
+                giveBadgeToUser(userId, Badge.BRONZE_MULTIPLICATOR);
                 break;
             case 500:
-                badgeCardRepository.save(new BadgeCard(userId, Badge.SILVER_MULTIPLICATOR));
+                giveBadgeToUser(userId, Badge.SILVER_MULTIPLICATOR);
                 break;
             case 1000:
-                badgeCardRepository.save(new BadgeCard(userId, Badge.GOLD_MULTIPLICATOR));
+                giveBadgeToUser(userId, Badge.GOLD_MULTIPLICATOR);
                 break;
         }
     }
 
     private void giveFirstAttemptBadge(Long userId, List<ScoreCard> scoreCards) {
         if (scoreCards.isEmpty()) {
-            BadgeCard badgeCard = new BadgeCard(userId, Badge.FIRST_ATTEMPT);
-            BadgeCard dbBadgeCard = badgeCardRepository.save(badgeCard);
+            giveBadgeToUser(userId, Badge.FIRST_ATTEMPT);
         }
     }
 
@@ -84,9 +83,13 @@ public class GameServiceImpl implements GameService {
         MultiplicationAttempt multiplicationAttempt = multiplicationAttemptClient.retrieveMultiplicationAttemptById(attemptId);
         if (multiplicationAttempt != null) {
             if (multiplicationAttempt.isLucky(LUCKY_NUMBER)) {
-                badgeCardRepository.save(new BadgeCard(userId, Badge.LUCKY_BADGE_42));
+                giveBadgeToUser(userId, Badge.LUCKY_BADGE_42);
             }
         }
+    }
+
+    private BadgeCard giveBadgeToUser(Long userId, Badge firstWon) {
+        return badgeCardRepository.save(new BadgeCard(userId, firstWon));
     }
 
     @Override
