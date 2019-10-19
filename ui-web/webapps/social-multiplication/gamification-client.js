@@ -10,7 +10,7 @@ const updateLeaderBoard = _ => {
   });
 };
 
-const updateStats = userId => {
+const updateGamificationStats = userId => {
   $.ajax({
     url: 'http://localhost:8081/stats?userId=' + userId,
     success: data => {
