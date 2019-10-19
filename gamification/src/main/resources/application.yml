@@ -1,6 +1,16 @@
 server:
   port: 8081
 
+# Persistence
+spring.jpa:
+  hibernate:
+    ddl-auto: update
+  properties:
+    hibernate:
+      show_sql: true
+
+spring.datasource.url: jdbc:h2:file:~/h2-file-db/social-gamification;DB_CLOSE_ON_EXIT=FALSE;
+
 ## RabbitMQ configuration
 multiplication:
   exchange: multiplication_exchange
