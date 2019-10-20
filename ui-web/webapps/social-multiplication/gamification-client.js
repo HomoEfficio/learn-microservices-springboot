@@ -1,7 +1,7 @@
 
 const updateLeaderBoard = _ => {
   $.ajax({
-    url: 'http://localhost:8081/leaders'
+    url: 'http://localhost:8000/leaders'
   }).then(data => {
     $('#leaderboard-body').empty();
     data.forEach(row => {
@@ -12,7 +12,7 @@ const updateLeaderBoard = _ => {
 
 const updateGamificationStats = userId => {
   $.ajax({
-    url: 'http://localhost:8081/stats?userId=' + userId,
+    url: 'http://localhost:8000/stats?userId=' + userId,
     success: data => {
       $('#stats-div').show();
       $('#stats-user-id').empty().append(userId);
