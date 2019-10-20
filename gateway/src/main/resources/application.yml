@@ -1,0 +1,5 @@
+server.port: 8000
+
+lmsb.upstream.url:
+  multiplication: http://localhost:8080
+  gamification: http://localhost:8081
