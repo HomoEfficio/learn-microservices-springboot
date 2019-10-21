@@ -3,3 +3,7 @@ server.port: 8000
 lmsb.upstream.url:
   multiplication: http://localhost:8080
   gamification: http://localhost:8081
+
+# Service Discovery Client Config
+eureka.client.service-url:
+  default-zone: http://localhost:8761/eureka/
