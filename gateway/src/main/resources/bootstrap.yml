@@ -1,0 +1,2 @@
+# Eureka Client Config
+spring.application.name: gateway
