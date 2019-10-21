@@ -1,9 +1,35 @@
 server.port: 8000
 
-lmsb.upstream.url:
-  multiplication: http://localhost:8080
-  gamification: http://localhost:8081
-
 # Service Discovery Client Config
 eureka.client.service-url:
   default-zone: http://localhost:8761/eureka/
+
+# Spring Cloud Gateway Config
+spring.cloud.gateway:
+  discovery:
+    locator.enabled: true
+  routes:
+    - id: upstream-multiplication-multiplications
+      uri: lb://multiplication  # outbound url path to Eureka Server (lb://SPRING.APPLICATION.NAME)
+      predicates:
+        - Path=/multiplications/**  # inbound url path from UI
+      filters:
+        - RewritePath=/multiplication/(?<path>.*), /$\{path}  # outbound url path to spring.application.name)
+    - id: upstream-multiplication-results
+      uri: lb://multiplication
+      predicates:
+        - Path=/results/**
+      filters:
+        - RewritePath=/multiplication/(?<path>.*), /$\{path}
+    - id: upstream-gamification-leaders
+      uri: lb://gamification
+      predicates:
+        - Path=/leaders/**
+      filters:
+        - RewritePath=/gamification/(?<path>.*), /$\{path}
+    - id: upstream-gamification-stats
+      uri: lb://gamification
+      predicates:
+        - Path=/stats/**
+      filters:
+        - RewritePath=/gamification/(?<path>.*), /$\{path}
