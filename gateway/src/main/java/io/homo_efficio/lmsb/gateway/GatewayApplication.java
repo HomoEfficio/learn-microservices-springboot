@@ -1,13 +1,10 @@
 package io.homo_efficio.lmsb.gateway;
 
-import io.homo_efficio.lmsb.gateway.config.RibbonConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.cloud.netflix.ribbon.RibbonClients;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@EnableEurekaClient
-@RibbonClients(defaultConfiguration = RibbonConfig.class)
+@EnableDiscoveryClient
 @SpringBootApplication
 public class GatewayApplication {
 

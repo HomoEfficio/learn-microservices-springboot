@@ -33,3 +33,8 @@ spring.cloud.gateway:
         - Path=/stats/**
       filters:
         - RewritePath=/gamification/(?<path>.*), /$\{path}
+
+# Disable Ribbon Loadbalancer
+spring.cloud.loadbalancer:
+  ribbon:
+    enabled: false
