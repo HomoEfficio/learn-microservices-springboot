@@ -14,6 +14,10 @@ spring.cloud.gateway:
       predicates:
         - Path=/multiplications/**  # inbound url path from UI
       filters:
+        - name: Hystrix
+          args:
+            name: hystrixMultiplication
+            fallbackUri: forward:/hystrix/multiplication
         - RewritePath=/multiplication/(?<path>.*), /$\{path}  # outbound url path to spring.application.name)
     - id: upstream-multiplication-results
       uri: lb://multiplication
