@@ -28,4 +28,22 @@ public class MultiplicationRepositoryTest {
 
         assertThat(dbMultiplication1).isEqualTo(dbMultiplication2);
     }
+
+    @Test
+    public void projection_test() {
+        // given
+        Multiplication multiplication = new Multiplication(20, 30);
+        Multiplication dbMultiplication = repository.save(multiplication);
+
+        // when
+        MultiplicationView multiplicationView = repository.findById(dbMultiplication.getId(), MultiplicationView.class)
+                .orElseThrow(() -> new RuntimeException("Projection Not Working"));
+
+        // then
+        assertThat(multiplicationView.getFactorA()).isEqualTo(multiplication.getFactorA());
+    }
+
+    interface MultiplicationView {
+        int getFactorA();
+    }
 }
